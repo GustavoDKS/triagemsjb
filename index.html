@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Coelho-Savassi - Aplicativo</title>
+<style>
+  :root{
+    --bg:#f6f7fb; --card:#ffffff; --accent:#07689f; --muted:#666;
+  }
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;margin:0;background:var(--bg);color:#111}
+  header{background:linear-gradient(90deg,var(--accent),#1f7a9a);color:#fff;padding:18px 16px}
+  h1{margin:0;font-size:1.2rem}
+  .container{max-width:980px;margin:16px auto;padding:0 12px}
+  .card{background:var(--card);border-radius:10px;padding:14px;margin-bottom:12px;box-shadow:0 6px 18px rgba(10,10,20,0.06)}
+  label{display:block;margin-bottom:6px;font-weight:600}
+  .row{display:flex;gap:8px;flex-wrap:wrap}
+  .col{flex:1 1 220px;min-width:180px}
+  select,input[type="number"]{width:100%;padding:8px;border-radius:8px;border:1px solid #ddd}
+  .small{font-size:0.9rem;color:var(--muted)}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  button{background:var(--accent);color:#fff;border:0;padding:10px 12px;border-radius:8px;cursor:pointer}
+  button.secondary{background:#e6eef4;color:#064a65}
+  .result{padding:12px;border-radius:8px;margin-top:8px}
+  .low{background:#e8f7ff;color:#034f84}
+  .mid{background:#fff6da;color:#7a5400}
+  .high{background:#ffe9e9;color:#8b1d1d}
+  .vhigh{background:#fbe7ff;color:#6b1f6b}
+  .list{margin:0;padding:0;list-style:none}
+  .footer{font-size:0.85rem;color:var(--muted);text-align:center;margin:18px 0}
+  .flex-between{display:flex;justify-content:space-between;align-items:center}
+  .saved-list{max-height:200px;overflow:auto;padding-top:8px}
+  @media (max-width:520px){ .row{flex-direction:column} .col{min-width:unset} }
+</style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <div class="flex-between">
+      <h1>Coelho-Savassi — Aplicativo de triagem familiar</h1>
+      <div class="small">Offline • Salva no celular</div>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <section class="card" aria-labelledby="ficha">
+    <h2 id="ficha">Ficha de avaliação</h2>
+    <p class="small">Marque o que se aplica à família. Os pontos somam automaticamente.</p>
+
+    <div style="margin-top:10px">
+      <label>Nome do responsável / família</label>
+      <input id="nome" type="text" placeholder="Ex.: Família Silva" />
+    </div>
+
+    <div style="margin-top:10px" class="card">
+      <strong>Itens (selecione o valor que melhor descreve)</strong>
+      <div class="row" style="margin-top:10px">
+        <!-- Each item: label + select with points 0-3 for example -->
+        <div class="col">
+          <label>Renda insuficiente</label>
+          <select data-key="renda">
+            <option value="0">0 - Não</option>
+            <option value="2">2 - Sim (leve)</option>
+            <option value="3">3 - Sim (moderado/alto)</option>
+          </select>
+        </div>
+
+        <div class="col">
+          <label>Condições precárias de moradia</label>
+          <select data-key="moradia">
+            <option value="0">0 - Não</option>
+            <option value="2">2 - Sim</option>
+            <option value="3">3 - Moradia insalubre/risco</option>
+          </select>
+        </div>
+
+        <div class="col">
+          <label>Ausência de saneamento básico</label>
+          <select data-key="saneamento">
+            <option value="0">0 - Não</option>
+            <option value="2">2 - Parcial</option>
+            <option value="3">3 - Ausência completa</option>
+          </select>
+        </div>
+
+        <div class="col">
+          <label>Desemprego/sem trabalho estável</label>
+          <select data-key="desemprego">
+            <option value="0">0 - Não</option>
+            <option value="2">2 - Parcial</option>
+            <option value="3">3 - Total</option>
+          </select>
+        </div>
+
+        <div class="col">
+          <label>Gestação na família</label>
+          <select data-key="gestacao">
+            <option value="0">0 - Não</option>
+            <option value="2">2 - Sim</option>
+          </select>
+        </div>
+
+        <div class="col">
+          <label>Crianças < 5 anos</label>
+          <select data-key="criancas">
+            <option value="0">0 - Não</option>
+            <option value="2">2 - Sim: 1</option>
+            <option value="3">3 - Sim: 2 ou mais</option>
+          </select>
+        </div>
+
+        <div class="col">
+          <label>Idosos dependentes</label>
+          <select data-key="idosos">
+            <option value="0">0 - Não</option>
+            <option value="2">2 - Sim</option>
+            <option value="3">3 - Sim com dependência grave</option>
+          </select>
+        </div>
+
+        <div class="col">
+          <label>Doenças crônicas na família</label>
+          <select data-key="cronicas">
+            <option value="0">0 - Não</option>
+            <option value="2">2 - Sim: 1</option>
+            <option value="3">3 - Sim: 2 ou mais</option>
+          </select>
+        </div>
+
+        <div class="col">
+          <label>Saúde mental / sofrimento psíquico</label>
+          <select data-key="mental">
+            <option value="0">0 - Não</option>
+            <option value="3">3 - Sim</option>
+          </select>
+        </div>
+
+        <div class="col">
+          <label>Uso de drogas / álcool com risco</label>
+          <select data-key="drogas">
+            <option value="0">0 - Não</option>
+            <option value="3">3 - Sim</option>
+          </select>
+        </div>
+
+        <div class="col">
+          <label>Violência doméstica</label>
+          <select data-key="violencia">
+            <option value="0">0 - Não</option>
+            <option value="3">3 - Sim</option>
+          </select>
+        </div>
+
+        <div class="col">
+          <label>Desnutrição / insegurança alimentar</label>
+          <select data-key="fome">
+            <option value="0">0 - Não</option>
+            <option value="3">3 - Sim</option>
+          </select>
+        </div>
+
+        <div class="col">
+          <label>Escola: evasão / abandono escolar</label>
+          <select data-key="escola">
+            <option value="0">0 - Não aplicável/Não</option>
+            <option value="2">2 - Risco</option>
+            <option value="3">3 - Evasão confirmada</option>
+          </select>
+        </div>
+
+        <div class="col">
+          <label>Deficiência / necessidade especial</label>
+          <select data-key="deficiencia">
+            <option value="0">0 - Não</option>
+            <option value="2">2 - Sim</option>
+            <option value="3">3 - Sim com alta dependência</option>
+          </select>
+        </div>
+
+        <div class="col">
+          <label>Sem documentação / beneficiários sem cadastro</label>
+          <select data-key="documento">
+            <option value="0">0 - Não</option>
+            <option value="2">2 - Sim</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="calcular">Calcular</button>
+      <button id="salvar" class="secondary">Salvar atendimento</button>
+      <button id="exportarCSV" class="secondary">Exportar CSV</button>
+      <button id="exportarJSON" class="secondary">Exportar JSON</button>
+      <button id="imprimir" class="secondary">Imprimir / Gerar relatório</button>
+    </div>
+
+    <div id="resultado" class="result" style="display:none;margin-top:12px">
+      <div><strong>Escore total:</strong> <span id="escoreValor">0</span></div>
+      <div style="margin-top:8px" id="classificacaoBox"></div>
+      <div style="margin-top:8px"><strong>Recomendações:</strong>
+        <ul id="recomendacoes" class="list"></ul>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="card" aria-labelledby="salvos">
+    <h2 id="salvos">Atendimentos salvos</h2>
+    <p class="small">Registros armazenados no dispositivo (apagar limpa tudo).</p>
+    <div class="saved-list" id="savedList"></div>
+    <div style="margin-top:10px" class="actions">
+      <button id="limparTudo" class="secondary">Apagar todos</button>
+    </div>
+  </section>
+
+  <div class="footer card small">
+    Desenvolvido para uso em campo — ajuste itens e pontuações conforme sua versão local da Tabela Coelho-Savassi.
+  </div>
+</main>
+
+<script>
+/* ========== Configurações (ajuste aqui se quiser) ========== */
+const RISK_RANGES = [
+  {name:'Baixo', min:0, max:4, id:'low'},
+  {name:'Médio', min:5, max:9, id:'mid'},
+  {name:'Alto', min:10, max:14, id:'high'},
+  {name:'Muito alto', min:15, max:999, id:'vhigh'}
+];
+/* ========================================================== */
+
+function getAllValues(){
+  const selects = document.querySelectorAll('select[data-key]');
+  const data = {};
+  selects.forEach(s => data[s.dataset.key] = Number(s.value || 0));
+  return data;
+}
+
+function calcularEscore(data){
+  let sum=0;
+  Object.values(data).forEach(v=> sum += Number(v||0));
+  return sum;
+}
+
+function classify(score){
+  return RISK_RANGES.find(r => score>=r.min && score<=r.max) || RISK_RANGES[0];
+}
+
+function buildRecommendations(data,score,range){
+  const rec = [];
+  if(data.violencia>0) rec.push('Priorização imediata e vínculo com serviço de proteção (notificação/encaminhamento).');
+  if(data.drogas>0 || data.mental>0) rec.push('Encaminhar para atenção psicossocial / CAPS / atendimento de saúde mental.');
+  if(data.fome>0 || data.renda>2) rec.push('Avaliar necessidades socioassistenciais e programas (Bolsa, cestas, CRAS).');
+  if(data.cronicas>0 || data.idosos>0) rec.push('Reforçar acompanhamento de condições crônicas e vacinas; visitas domiciliares.');
+  if(data.gestacao>0) rec.push('Garantir pré-natal e acompanhamentos; priorizar vínculo com UBS.');
+  if(score >= 10) rec.push('Monitoramento frequente (visitas/contatos) e plano individualizado de cuidado.');
+  if(rec.length===0) rec.push('Acompanhamento rotineiro pela equipe, orientações preventivas e atualização de cadastro.');
+  return rec;
+}
+
+/* DOM e eventos */
+const calcularBtn = document.getElementById('calcular');
+const escValor = document.getElementById('escoreValor');
+const classBox = document.getElementById('classificacaoBox');
+const recBox = document.getElementById('recomendacoes');
+const resBox = document.getElementById('resultado');
+const salvarBtn = document.getElementById('salvar');
+const savedList = document.getElementById('savedList');
+const limparBtn = document.getElementById('limparTudo');
+const exportCSV = document.getElementById('exportarCSV');
+const exportJSON = document.getElementById('exportarJSON');
+const imprimirBtn = document.getElementById('imprimir');
+
+function renderResult(score){
+  escValor.textContent = score;
+  const range = classify(score);
+  classBox.innerHTML = '<div class="result '+range.id+'"><strong>Classificação:</strong> '+range.name+' ('+range.min+'–'+range.max+')</div>';
+  const recs = buildRecommendations(getAllValues(), score, range);
+  recBox.innerHTML = recs.map(r=>'<li>'+r+'</li>').join('');
+  resBox.style.display = 'block';
+}
+
+calcularBtn.addEventListener('click', ()=> {
+  const data = getAllValues();
+  const score = calcularEscore(data);
+  renderResult(score);
+});
+
+function loadSaved(){
+  const raw = localStorage.getItem('cs_atendimentos');
+  const arr = raw ? JSON.parse(raw) : [];
+  savedList.innerHTML = arr.length===0 ? '<div class="small">Nenhum registro salvo.</div>' :
+    arr.map((a,i)=>`<div class="card" style="margin-bottom:8px;padding:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><strong>${a.nome||'Sem nome'}</strong><div class="small">${new Date(a.created).toLocaleString()}</div></div>
+        <div><button data-idx="${i}" class="openBtn">Abrir</button> <button data-idx="${i}" class="delBtn">Apagar</button></div>
+      </div>
+      <div class="small" style="margin-top:6px">Escore: ${a.score} • Classificação: ${a.class}</div>
+    </div>`).join('');
+  // attach events
+  document.querySelectorAll('.openBtn').forEach(b=> b.addEventListener('click', (e)=>{
+    const idx = e.target.dataset.idx;
+    openSaved(idx);
+  }));
+  document.querySelectorAll('.delBtn').forEach(b=> b.addEventListener('click', (e)=>{
+    const idx = e.target.dataset.idx;
+    deleteSaved(idx);
+  }));
+}
+loadSaved();
+
+function saveCurrent(){
+  const data = getAllValues();
+  const nome = document.getElementById('nome').value.trim();
+  const score = calcularEscore(data);
+  const range = classify(score);
+  const raw = localStorage.getItem('cs_atendimentos');
+  const arr = raw ? JSON.parse(raw) : [];
+  arr.unshift({nome, data, score, class:range.name, created: new Date().toISOString()});
+  localStorage.setItem('cs_atendimentos', JSON.stringify(arr));
+  alert('Atendimento salvo localmente.');
+  loadSaved();
+}
+
+salvarBtn.addEventListener('click', saveCurrent);
+
+function openSaved(idx){
+  const raw = localStorage.getItem('cs_atendimentos');
+  if(!raw) return;
+  const arr = JSON.parse(raw);
+  const rec = arr[idx];
+  if(!rec) return;
+  // populate form
+  document.getElementById('nome').value = rec.nome || '';
+  Object.entries(rec.data).forEach(([k,v])=>{
+    const sel = document.querySelector(`select[data-key="${k}"]`);
+    if(sel) sel.value = v;
+  });
+  renderResult(rec.score);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function deleteSaved(idx){
+  if(!confirm('Apagar este registro?')) return;
+  const raw = localStorage.getItem('cs_atendimentos');
+  const arr = raw ? JSON.parse(raw) : [];
+  arr.splice(idx,1);
+  localStorage.setItem('cs_atendimentos', JSON.stringify(arr));
+  loadSaved();
+}
+
+limparBtn.addEventListener('click', ()=>{
+  if(confirm('Apagar todos os registros salvos localmente?')) {
+    localStorage.removeItem('cs_atendimentos');
+    loadSaved();
+  }
+});
+
+/* Export CSV/JSON */
+function getAllSaved() {
+  const raw = localStorage.getItem('cs_atendimentos');
+  return raw ? JSON.parse(raw) : [];
+}
+
+exportCSV.addEventListener('click', ()=>{
+  const all = getAllSaved();
+  if(all.length===0){ alert('Nenhum registro salvo para exportar.'); return; }
+  const keys = Object.keys(all[0].data);
+  const header = ['nome','created','score','class', ...keys];
+  const rows = all.map(r => {
+    return header.map(h=>{
+      if(h==='nome') return `"${(r.nome||'').replace(/"/g,'""')}"`;
+      if(h==='created') return `"${r.created}"`;
+      if(h==='score') return r.score;
+      if(h==='class') return `"${r.class}"`;
+      return r.data[h] ?? 0;
+    }).join(',');
+  });
+  const csv = [header.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'coelho-savassi-atendimentos.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+exportJSON.addEventListener('click', ()=>{
+  const all = getAllSaved();
+  if(all.length===0){ alert('Nenhum registro salvo para exportar.'); return; }
+  const blob = new Blob([JSON.stringify(all,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'coelho-savassi-atendimentos.json';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+/* Print / report */
+imprimirBtn.addEventListener('click', ()=>{
+  // prepare a printable report based on current form
+  const nome = document.getElementById('nome').value || 'Sem nome';
+  const data = getAllValues();
+  const score = calcularEscore(data);
+  const range = classify(score);
+  const recs = buildRecommendations(data, score, range);
+  const win = window.open('', '_blank');
+  const html = `
+    <html><head><meta charset="utf-8"><title>Relatório ${nome}</title>
+    <style>body{font-family:Arial,Helvetica,sans-serif;padding:20px;color:#111} h1{font-size:18px} .small{color:#555}</style>
+    </head><body>
+    <h1>Relatório — ${nome}</h1>
+    <div class="small">Data: ${new Date().toLocaleString()}</div>
+    <h3>Resultado</h3>
+    <p><strong>Escore:</strong> ${score} — <strong>Classificação:</strong> ${range.name}</p>
+    <h3>Itens preenchidos</h3>
+    <ul>${Object.entries(data).map(([k,v])=>`<li>${k}: ${v}</li>`).join('')}</ul>
+    <h3>Recomendações</h3>
+    <ul>${recs.map(r=>`<li>${r}</li>`).join('')}</ul>
+    <hr><div class="small">Gerado pelo app Coelho-Savassi</div>
+    </body></html>`;
+  win.document.write(html);
+  win.document.close();
+  // user can print/save as PDF
+});
+
+/* share quick result if supported */
+document.getElementById('calcular').addEventListener('click', async ()=>{
+  const nome = document.getElementById('nome').value || 'Sem nome';
+  const data = getAllValues();
+  const score = calcularEscore(data);
+  const range = classify(score);
+  // try to offer share if supported (but do not force)
+  if(navigator.share){
+    const text = `Família: ${nome}\nEscore: ${score} — ${range.name}\nRecomendações: ${buildRecommendations(data,score,range).join('; ')}`;
+    // keep share optional: don't call automatically, but offer a tiny prompt
+    if(confirm('Deseja compartilhar o resultado via apps do celular?')) {
+      try { await navigator.share({title:`Resultado ${nome}`, text}); } catch(e){ /* cancelado */ }
+    }
+  }
+});
+
+/* Ready */
+document.addEventListener('DOMContentLoaded', ()=> loadSaved());
+</script>
+</body>
+</html>
